@@ -15,6 +15,15 @@ app.set('layout', 'layout')
 app.get('/',function(req,res){
 	res.render('home', { layout: 'layout' })
 });
+
+app.get('/login',function(req,res){
+	res.render('login_user', { layout: 'layout' })
+});
+
+app.post('/login',function(req,res){
+	res.render('user_page', { layout: 'layout' })
+});
+
 app.get('/tes',function(req,res){
 	res.end("hello");
 })
