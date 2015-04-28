@@ -5,6 +5,7 @@ var bodyParser = require("body-parser");
 var http = require('http').Server(app);
 var mysql = require('mysql');
 var partial = require('express-partial');
+
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded());
 app.use(partial())
@@ -21,13 +22,17 @@ app.get('/login',function(req,res){
 });
 
 app.post('/login',function(req,res){
-	res.render('user_page', { layout: 'layout' })
+	res.redirect('/userpage')
 });
 
 app.get('/tes',function(req,res){
 	res.end("hello");
 })
 
+app.get('/userpage',function(req,res){
+
+	res.render('user_page', { layout: 'layout' })
+})
 
 /* Database connection*/
 var connection = mysql.createPool({
