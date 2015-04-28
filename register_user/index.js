@@ -5,7 +5,7 @@ var bodyParser = require("body-parser");
 var http = require('http').Server(app);
 var mysql = require('mysql');
 var partial = require('express-partial');
-
+var login = false;
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded());
 app.use(partial())
@@ -22,7 +22,31 @@ app.get('/login',function(req,res){
 });
 
 app.post('/login',function(req,res){
-	res.redirect('/userpage')
+	  connection.query('SELECT * from customer', function(err, rows, fields) {
+	  if (err) throw err;
+	 
+	  for(i=0;i<rows.length;i++)
+	  {
+	  	if(req.body.email==rows[i].email && req.body.pass==rows[i].pass){
+		  	var now = moment()
+			var date = now.format('YYYY-MM-DD HH:mm:ss')
+		  	login=true;
+		  	labPenjaga=rows[i].email;
+		  	ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+			
+		  }
+	  
+	  }
+	  var currip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	  if(login && currip==ip)
+	  	{
+	  		res.redirect('/userpage')
+	  		
+		  	
+	  	}
+	  else res.redirect('/login')
+	});
+	
 });
 
 app.get('/tes',function(req,res){
@@ -39,7 +63,7 @@ var connection = mysql.createPool({
   host     : '',
   user     : 'root',
   password : '',
-  database : 'mydb'
+  database : 'cloudnode'
 });
 
  http.listen(3000, function(){
