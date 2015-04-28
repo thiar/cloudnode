@@ -1,33 +1,51 @@
-var http = require('http');
-var net = require('net');
-var fs = require('fs');
-var config = require('./jsonFile.json')
+var sys = require ('sys'),
+	url = require('url'),
+	http = require('http'),
+	qs = require('querystring');
 
-http.createServer(function(req, res){
-	res.writeHead(200, {'Content-Type':'text/plain'});
-	res.end('Hello World\n');
-}).listen(1337, '10.151.36.79');
-console.log('Server running at http://10.151.36.79:1337');
+var net = require('net'),
+	fs = require('fs');
+var config = require('./jsonFile.json');
 
-/*var server = net.createServer(function (socket) {
-  socket.write('Echo server\r\n');
-  socket.pipe(socket);
-});
+var server = http.createServer(function (req, res) {
+    if(req.method=='POST') {
+            var body='';
+            req.on('data', function (data) {
+                body +=data;
+            });
+            req.on('end',function(){
 
-server.listen(1337, '10.151.36.79');
-*/
-fs.readFile('./jsonFile.json', 'utf8', function (err, data) {
-if (err) throw err;
+                var POST =  qs.parse(body);
+                //console.log(POST);
+                res.writeHead( 200 );
+                res.write( JSON.stringify( POST ) );
+                res.end();                 
+            });
+    }
+    else if(req.method=='GET') {
 
-else if(data.indexOf('create') > -1) 
-	console.log('jalankan fungsi create'+' '+config.create['nama']);
+        var url_parts = url.parse(req.url,true);
+        //console.log(url_parts.query);
+        res.writeHead( 200 );
+        res.write( JSON.stringify( url_parts.query ) );
+        res.end();
+    }               
+}
+);
+server.listen( 9080 );
 
-else if(data.indexOf('start') > -1) 
-	console.log('jalankan fungsi start'+' '+config.start);
+/*fs.readFile('./jsonFile.json', 'utf8', function (err, data) {
+	if (err) throw err;
 
-else if(data.indexOf('stop') > -1) 
-	console.log('jalankan fungsi stop'+' '+config.stop);
+	else if(data.indexOf('create') > -1) 
+		console.log('jalankan fungsi create'+' '+config.create['nama']);
 
-else if(data.indexOf('delete') > -1) 
-	console.log('jalankan fungsi delete'+' '+config.delete);
-});
+	else if(data.indexOf('start') > -1) 
+		console.log('jalankan fungsi start'+' '+config.start);
+
+	else if(data.indexOf('stop') > -1) 
+		console.log('jalankan fungsi stop'+' '+config.stop);
+
+	else if(data.indexOf('delete') > -1) 
+		console.log('jalankan fungsi delete'+' '+config.delete);
+});*/
