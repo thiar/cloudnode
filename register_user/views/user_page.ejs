@@ -77,7 +77,7 @@
                 <li><a href="#"><i class="pg-outdent"></i> Ubah Password</a>
                 </li>
                 <li class="bg-master-lighter">
-                  <a href="<?php echo site_url();?>/login/do_logout" class="clearfix">
+                  <a href="/do_logout" class="clearfix">
                     <span class="pull-left">Logout</span>
                     <span class="pull-right"><i class="pg-power"></i></span>
                   </a>
@@ -271,3 +271,39 @@
         </div>
         <!-- END COPYRIGHT -->
       </div>
+
+      <script type="text/javascript">
+      $(function() {
+    $( "#slider-range-min" ).slider({
+      range: "min",
+      value: 1,
+      min: 0,
+      max: 1000,
+      slide: function( event, ui ) {
+        $( "#amount" ).val( "IDR " +ui.value *3+ "000");
+        $( "#loot" ).val( ui.value +"Loots" );
+        $( "#memory" ).val( ui.value  + "MB");
+        $( "#space" ).val( (ui.value * 0.03).toFixed(3) + " GB");
+        $( "#bandwith" ).val( ui.value  + "GB");
+        $( "#request" ).val( ui.value *1000 + " times/month");
+        $(".a, .b, .c, .d").width(ui.value/10 + "%");
+      }
+    });
+    $(".ui-slider-handle").text("<>");
+    $( "#amount" ).val( "IDR " + $( "#slider-range-min" ).slider( "value")*3 + "000");
+    $( "#loot" ).val( $( "#slider-range-min" ).slider( "value") +"Loots");
+    $( "#memory" ).val(  $( "#slider-range-min" ).slider( "value") + "MB");
+    $( "#space" ).val( $( "#slider-range-min" ).slider( "value")*0.03 + " GB");
+    $( "#bandwith" ).val( $( "#slider-range-min" ).slider( "value") + "GB");
+    $( "#request" ).val( $( "#slider-range-min" ).slider( "value")*1000 + " times/month");
+  });
+  $('#loot').change(function(){
+      $( "#amount" ).val("IDR "+ $('#loot').val() *3+ "000");
+      $( "#memory" ).val( $('#loot').val().split(" ")[0]  + "MB");
+      $( "#space" ).val( ($('#loot').val() * 0.03).toFixed(3) + " GB");
+      $( "#bandwith" ).val( $('#loot').val()  + "GB");
+      $( "#request" ).val( $('#loot').val() *1000 + " times/month");
+      $(".a, .b, .c, .d").width($('#loot').val()/10 + "%");
+  });
+
+      </script>
