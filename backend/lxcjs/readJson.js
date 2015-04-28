@@ -7,6 +7,7 @@ var net = require('net'),
 	fs = require('fs');
 var config = require('./jsonFile.json');
 var cp = require('child_process');
+var mm = require('minimist');
 
 var server = http.createServer(function (req, res) {
     if(req.method=='POST') {
