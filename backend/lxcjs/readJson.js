@@ -1,7 +1,8 @@
 var http = require('http');
 var net = require('net');
 var fs = require('fs');
-var config = require('./jsonFile.json')
+var config = require('./jsonFile.json');
+var cp = require('child_process');
 
 http.createServer(function(req, res){
 	res.writeHead(200, {'Content-Type':'text/plain'});
@@ -19,15 +20,20 @@ server.listen(1337, '10.151.36.79');
 fs.readFile('./jsonFile.json', 'utf8', function (err, data) {
 if (err) throw err;
 
-else if(data.indexOf('create') > -1) 
+else if(data.indexOf('create') > -1){
+	cp.fork('./lxc.js');
 	console.log('jalankan fungsi create'+' '+config.create['nama']);
-
-else if(data.indexOf('start') > -1) 
+}
+else if(data.indexOf('start') > -1){ 
+	cp.fork('./lxc.js');
 	console.log('jalankan fungsi start'+' '+config.start);
-
-else if(data.indexOf('stop') > -1) 
+}
+else if(data.indexOf('stop') > -1){
+	cp.fork('./lxc.js');
 	console.log('jalankan fungsi stop'+' '+config.stop);
-
-else if(data.indexOf('delete') > -1) 
+}
+else if(data.indexOf('delete') > -1){
+	cp.fork('./lxc.js');
 	console.log('jalankan fungsi delete'+' '+config.delete);
+}
 });
