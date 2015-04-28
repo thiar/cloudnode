@@ -2,7 +2,11 @@ var querystring = require('querystring');
     http = require('http');
 
 var postData = querystring.stringify({
-  'msg' : 'Hello World!'
+  'msg' : 'Hello World!',
+  'create': 'John',
+  'start': 'Smith',
+  'stop': 25,
+  'delete' : 'ok'
 });
 
 var options = {

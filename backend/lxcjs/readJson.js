@@ -13,11 +13,17 @@ var server = http.createServer(function (req, res) {
             var body='';
             req.on('data', function (data) {
                 body +=data;
+                //console.log(body);
             });
             req.on('end',function(){
 
                 var POST =  qs.parse(body);
-                //console.log(POST);
+                console.log( POST );
+                var data = JSON.stringify( POST );
+                if(data.indexOf('create') > -1) console.log('jalankan fungsi create');
+                else if(data.indexOf('start') > -1) console.log('jalankan fungsi start');
+                else if(data.indexOf('stop') > -1) console.log('jalankan fungsi stop');
+                else if(data.indexOf('delete') > -1) console.log('jalankan fungsi delete');
                 res.writeHead( 200 );
                 res.write( JSON.stringify( POST ) );
                 res.end();                 
@@ -26,7 +32,7 @@ var server = http.createServer(function (req, res) {
     else if(req.method=='GET') {
 
         var url_parts = url.parse(req.url,true);
-        //console.log(url_parts.query);
+        console.log(url_parts.query);
         res.writeHead( 200 );
         res.write( JSON.stringify( url_parts.query ) );
         res.end();
@@ -34,29 +40,27 @@ var server = http.createServer(function (req, res) {
 });
 server.listen( 9080 );
 
+// fs.readFile('./jsonFile.json', 'utf8', function (err, data) {
+// 	if (err) throw err;
 
+// 	else if(data.indexOf('create') > -1){
+// 		cp.fork('./lxc.js');
+// 		console.log('jalankan fungsi create'+' '+config.create['nama']);
+// 	}
 
-fs.readFile('./jsonFile.json', 'utf8', function (err, data) {
-	if (err) throw err;
+// 	else if(data.indexOf('start') > -1){ 
+// 		cp.fork('./lxc.js');
+// 		console.log('jalankan fungsi start'+' '+config.start);
+// 	}
 
-	else if(data.indexOf('create') > -1){
-		cp.fork('./lxc.js');
-		console.log('jalankan fungsi create'+' '+config.create['nama']);
-	}
+// 	else if(data.indexOf('stop') > -1){
+// 		cp.fork('./lxc.js');
+// 		console.log('jalankan fungsi stop'+' '+config.stop);
+// 	}
 
-	else if(data.indexOf('start') > -1){ 
-		cp.fork('./lxc.js');
-		console.log('jalankan fungsi start'+' '+config.start);
-	}
-
-	else if(data.indexOf('stop') > -1){
-		cp.fork('./lxc.js');
-		console.log('jalankan fungsi stop'+' '+config.stop);
-	}
-
-	else if(data.indexOf('delete') > -1){
-		cp.fork('./lxc.js');
-		console.log('jalankan fungsi delete'+' '+config.delete);
-	}
-});
+// 	else if(data.indexOf('delete') > -1){
+// 		cp.fork('./lxc.js');
+// 		console.log('jalankan fungsi delete'+' '+config.delete);
+// 	}
+// });
 
