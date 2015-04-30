@@ -8,6 +8,7 @@ var net = require('net'),
 var config = require('./jsonFile.json');
 var cp = require('child_process');
 var mm = require('minimist');
+var create = require('./create');
 
 var server = http.createServer(function (req, res) {
     if(req.method=='POST') {
@@ -21,10 +22,10 @@ var server = http.createServer(function (req, res) {
                 var POST =  qs.parse(body);
                 console.log( POST );
                 var data = JSON.stringify( POST );
-                if(data.indexOf('create') > -1) console.log('jalankan fungsi create');
-                else if(data.indexOf('start') > -1) console.log('jalankan fungsi start');
-                else if(data.indexOf('stop') > -1) console.log('jalankan fungsi stop');
-                else if(data.indexOf('delete') > -1) console.log('jalankan fungsi delete');
+                if(data.indexOf('create') > -1) create.clone(); // kurang parameter
+                else if(data.indexOf('start') > -1) create.start();
+                else if(data.indexOf('stop') > -1) create.stop();
+                else if(data.indexOf('delete') > -1) ccreate.destroy();
                 res.writeHead( 200 );
                 res.write( JSON.stringify( POST ) );
                 res.end();                 
