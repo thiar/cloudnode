@@ -5,7 +5,7 @@ var spawn = require('child_process').spawn,
 //fungsi clone di gunakan untuk membuat virtual host baru
 //parameter vm1 diisi dengan 'template'
 //parameter vm2 diisi dengan 'vmnamaUser'
-function clone(vm1, vm2){
+exports.clone=function(vm1, vm2){
     var c = spawn('lxc-clone',['-0',vm1,'-n',vm2]);
     c.stdout.on('data', function (data) {
 	console.log('stdout: ' + data);
@@ -21,7 +21,7 @@ function clone(vm1, vm2){
 }
 //fungsi start digunakan untuk memulai virtual host yang sudah dibuat
 //parameter vm diisi dengan 'vmnamaUser'
-function start(vm){
+exports.start=function(vm){
     var c = spawn('lxc-start',['-n',vm,'--daemon']);
     c.stdout.on('data', function (data) {
         console.log('stdout: ' + data);
@@ -38,7 +38,7 @@ function start(vm){
 }
 //fungsi stop digunakan untuk menghentikan virtual host yang sudah dibuat
 //parameter vm diisi dengan 'vmnamaUser'
-function stop(vm){
+exports.stop=function(vm){
     var c = spawn('lxc-stop',['-n',vm]);
     c.stdout.on('data', function (data) {
         console.log('stdout: ' + data);
@@ -55,7 +55,7 @@ function stop(vm){
 }
 //fungsi delete digunakan untuk menghapus virtual host yang sudah dibuat
 //parameter vm diisi dengan 'vmnamaUser'
-function delete(vm){
+exports.destroy=function(vm){
     var c = spawn('lxc-destroy',['-n',vm]);
     c.stdout.on('data', function (data) {
         console.log('stdout: ' + data);
