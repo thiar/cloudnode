@@ -106,17 +106,21 @@ app.post('/newService',function(req,res){
 	var status="STOP"
 	var ip="0.0.0.0"
 	var port ="8080"
-	connection.query('INSERT INTO `service`(`idservice`,`customer_idcustomer`, `namaservice`, `memory`, `space`, `bandwith`, `request`, `worker`, `status`, `ip`,`port`,`app_idapp`,`DB_idDB`)VALUES("",\''+req.session.customer.idCustomer+'\',\''+serviceName+'\',\''+memory+'\',\''+space+'\',\''+bandwith+'\',\''+request+'\',\''+worker+'\',\''+status+'\',\''+ip+'\',\''+port+'\',\''+newApp+'\',\''+newDb+'\')'), function(err, rows, fields) 
+	connection.query('INSERT INTO `service`(`idservice`,`customer_idcustomer`, `namaservice`, `memory`, `space`, `bandwith`, `request`, `worker`, `status`, `ip`,`port`,`app_idapp`,`DB_idDB`)VALUES("",\''+req.session.customer.idCustomer+'\',\''+serviceName+'\',\''+memory+'\',\''+space+'\',\''+bandwith+'\',\''+request+'\',\''+worker+'\',\''+status+'\',\''+ip+'\',\''+port+'\',\''+newApp+'\',\''+newDb+'\')', function(err, rows, fields) 
 	{
+		res.setHeader('Content-Type', 'application/json');
 		if (err){
-			console.log("error happened");
-			throw err;	
-		} 
+			res.end(JSON.stringify({ status: err.code }));
+		}
+		else
+		{
+			res.end(JSON.stringify({ status: "OK" }));
+		}
+		//console.log(amount+" "+loot+" "+memory+" "+space+" "+bandwith+" "+request+" "+worker+" "+newDb+" "+newApp + " "+serviceName);
 		
-	}
-	console.log(amount+" "+loot+" "+memory+" "+space+" "+bandwith+" "+request+" "+worker+" "+newDb+" "+newApp + " "+serviceName);
-	res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ status: "OK" }));
+		
+	});
+	
 	
 });
 app.get('/userpage',function(req,res){
