@@ -34,7 +34,7 @@ var connection = mysql.createPool({
 
 
 app.get('/',function(req,res){
-	res.render('home', { layout: 'layout' })
+	res.render('home', { layout: 'layout',page: req.url })
 });
 app.post('/register',function(req,res){
 	var firstname=req.body.firstname
@@ -53,7 +53,7 @@ app.post('/register',function(req,res){
 		if (err) throw err;
 
 	}
-	res.render('succes', { layout: 'layout' })
+	res.render('succes', { layout: 'layout',page: req.url })
 		
 });
 	
@@ -65,7 +65,7 @@ app.get('/login',function(req,res){
 	}
 	else 
 	{
-		res.render('login_user', { layout: 'layout' })
+		res.render('login_user', { layout: 'layout',page: req.url })
 	};
 });
 
@@ -78,6 +78,7 @@ app.post('/login',function(req,res){
 	  	if(req.body.email==rows[i].email && req.body.pass==rows[i].pass){
 		  	ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 			req.session.login = true
+			req.session.customer=rows[i];
 		  }
 	  
 	  }
@@ -94,7 +95,18 @@ app.post('/login',function(req,res){
 app.get('/userpage',function(req,res){
 	if (req.session.login!=null && req.session.login==true)
 	{
-	  		res.render('user_page', { layout: 'layout' })
+
+		connection.query('SELECT * from app', function(err, rows, fields) {
+	  		if (err) throw err;
+	  		req.session.apps=rows;
+	  		connection.query('SELECT * from db', function(err, rows, fields) {
+		  		if (err) throw err;
+		  		req.session.dbs=rows;
+		  		res.render('user_page', { layout: 'layout',page: req.url,customer:req.session.customer,allApp:req.session.apps,allDb:req.session.dbs=rows});
+		  	});
+	  	});
+
+	  	
 
 	}
 	else res.redirect('/login')
@@ -106,5 +118,5 @@ app.get('/logout',function(req,res){
 });
 
 app.get('/succes',function(req,res){
-	res.render('succes', { layout: 'layout' })
+	res.render('succes', { layout: 'layout',page: req.url })
 });

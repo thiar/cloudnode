@@ -59,7 +59,7 @@
           <!-- START User Info-->
           <div class="visible-lg visible-md m-t-10">
             <div class="pull-left p-r-10 p-t-10 fs-16 font-heading">
-              <span class="semi-bold">Rohman Muhamad</span>
+              <span class="semi-bold"><%= customer.firstname +" " +customer.lastname %></span>
             </div>
             <div class="pull-left p-r-10 p-t-10 fs-16 font-heading">
               <a href="/logout" class="clearfix">
@@ -93,16 +93,18 @@
                   <!--</div>-->
                   <div class="col-lg-5 col-md-6 ">
                     <!-- START PANEL -->
+                   
                     <div class="panel panel-transparent">
                       <div class="panel-heading">
                         <div class="panel-title">USER DATA
                         </div>
                       </div>
                       <div class="panel-body">
-                        <h3>Rohman Muhamad</h3>
-                        <p>rmuhamad@live.com</p>
-                        <p class="small hint-text m-t-5">Jl. Margorejo Indah 115A, Surabaya
-                          <br> 031 8433950 / 031 8416042</p>
+                        <h3> <%= customer.firstname +" " +customer.lastname %></h3>
+                        <p><%= customer.email %></p>
+                        <p class="small hint-text m-t-5"><%= customer.address+"/"+ customer.zipcode %>
+                          <br><%= customer.city+","+customer.province %></p>
+                          <%= customer.country %></p>
                         <br>
                       </div>
                     </div>
@@ -113,16 +115,17 @@
                     <div class="panel panel-transparent">
                     <div class="panel-heading">
                       <div class="panel-title">Price</div>
+
                     </div>
                   
                     <div class="panel-body">
-                    <h4>Choose your bill</h4>   
+                    <h4>Choose your bill</h4>
                       <div class="row">
                         <div class="col-sm-3">
                           <label class="resource">Memory</label>
                         </div>
                          <div class="col-sm-4">
-                          <input type="text"  class="resource" disabled id="memory" />
+                          <input type="text"  class="resource" name="memory" disabled id="memory" />
                         </div>
                       </div>
                 
@@ -131,7 +134,7 @@
                           <label class="resource">Space</label>
                         </div>
                          <div class="col-sm-4">             
-                          <input type="text"  class="resource" disabled id="space" />                                                    
+                          <input type="text"  class="resource" name="space" disabled id="space" />                                                    
                         </div>
                       </div>
 
@@ -140,7 +143,7 @@
                           <label class="resource">Bandwith</label>
                         </div>
                          <div class="col-sm-4">
-                          <input type="text"  class="resource" disabled id="bandwith" />                          
+                          <input type="text"  class="resource" name="bandwith" disabled id="bandwith" />                          
                         </div>
                       </div>
 
@@ -149,10 +152,42 @@
                           <label class="resource">Request </label>
                         </div>
                          <div class="col-sm-4">
-                          <input type="text"  class="resource" disabled id="request" />                          
+                          <input type="text"  class="resource" name="request" disabled id="request" />                          
                         </div>
                       </div>
+                       <div class="row">
+                        <div class="col-sm-3">
+                          <label class="resource">worker </label>
+                        </div>
+                         <div class="col-sm-4 " class="">
+                          <input type="text"  class="resource" name="worker" disabled id="worker" />                          
+                        </div>
+                      </div>
+                      <div class="row">
                       
+                        <div class="form-group form-group-default form-group-default-select2 required">
+                          <label class="">Aplication</label>
+                          <select class="full-width" data-placeholder="Select Aplication" data-init-plugin="select2" id="newApp" name="newApp">
+                            <optgroup label="Node Js Aplication">
+                              <% for(var i in allApp){ %>
+                              <option value="<%=allApp[i].idapp%>"><%=allApp[i].nama%></option>
+                              <% }%>
+                            </optgroup>
+                          </select>
+                        </div>
+                        <div class="form-group form-group-default form-group-default-select2 required">
+                          <label class="">Database</label>
+                          <select class="full-width" data-placeholder="Select Aplication" data-init-plugin="select2" id="newDb"name="newDb">
+                            <optgroup label="Database Aplication">
+                              <% for(var i in allDb){ %>
+                              <option value="<%=allDb[i].idDB%>"><%=allDb[i].nama%></option>
+                              <% }%>
+                            </optgroup>
+                          </select>
+                        </div>
+                     
+                    </div> 
+
                       <div class="row">
                       <div class="cube">
                       <div class="a"></div>
@@ -164,13 +199,16 @@
                        <input type="text"  class="slider"  disabled id="loot" />
                        <input type="text"  class="slider" disabled id="amount" />
                     </div>
+                    
                 <div class="col-md-3"></div>
-                  <button class="btn btn-complete btn-cons col-md-4" height="50px">COMPLETE</button>  
+                  <button class="btn btn-complete btn-cons col-md-4" id="complete" height="50px">COMPLETE</button>
+               
                     <!-- END PANEL -->
                 </div>
                 </div>
               </div>
-              </div>
+              </div
+
           <!-- END JUMBOTRON -->
           <!-- START CONTAINER FLUID -->
           <div class="container-fluid container-fixed-lg bg-white">
@@ -265,21 +303,36 @@
       max: 1000,
       slide: function( event, ui ) {
         $( "#amount" ).val( "IDR " +ui.value *3+ "000");
-        $( "#loot" ).val( ui.value +"Loots" );
-        $( "#memory" ).val( ui.value  + "MB");
+        $( "#loot" ).val( ui.value +" Loots" );
+        $( "#memory" ).val( ui.value  + " MB");
         $( "#space" ).val( (ui.value * 0.03).toFixed(3) + " GB");
-        $( "#bandwith" ).val( ui.value  + "GB");
+        $( "#bandwith" ).val( ui.value  + " GB");
         $( "#request" ).val( ui.value *1000 + " times/month");
+        if(ui.value > 500)$( "#worker" ).val("2 worker");
+        else $( "#worker" ).val("1 worker");
         $(".a, .b, .c, .d").width(ui.value/10 + "%");
       }
     });
     $(".ui-slider-handle").text("<>");
     $( "#amount" ).val( "IDR " + $( "#slider-range-min" ).slider( "value")*3 + "000");
-    $( "#loot" ).val( $( "#slider-range-min" ).slider( "value") +"Loots");
-    $( "#memory" ).val(  $( "#slider-range-min" ).slider( "value") + "MB");
+    $( "#loot" ).val( $( "#slider-range-min" ).slider( "value") +" Loots");
+    $( "#memory" ).val(  $( "#slider-range-min" ).slider( "value") + " MB");
     $( "#space" ).val( $( "#slider-range-min" ).slider( "value")*0.03 + " GB");
-    $( "#bandwith" ).val( $( "#slider-range-min" ).slider( "value") + "GB");
+    $( "#bandwith" ).val( $( "#slider-range-min" ).slider( "value") + " GB");
     $( "#request" ).val( $( "#slider-range-min" ).slider( "value")*1000 + " times/month");
+    $( "#worker" ).val("1 worker");
+  });
+  $('#complete').click(function(){
+      var amount=$( "#amount" ).val();
+      var loot=$( "#loot" ).val();
+      var memory=$( "#memory" ).val();
+      var space=$( "#space" ).val();
+      var bandwith=$( "#bandwith" ).val();
+      var request=$( "#request" ).val();
+      var worker=$( "#worker" ).val();
+      var newApp=$( "#newApp" ).val();
+      var newDb=$( "#newDb" ).val();
+      console.log(amount+" "+loot+" "+memory+" "+space+" "+bandwith+" "+request+" "+worker+" "+newDb+" "+newApp);
   });
   $('#loot').change(function(){
       $( "#amount" ).val("IDR "+ $('#loot').val() *3+ "000");
