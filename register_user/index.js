@@ -25,7 +25,8 @@ var connection = mysql.createPool({
   host     : '',
   user     : 'root',
   password : '',
-  database : 'cloudnode'
+  database : 'cloudnode',
+  multipleStatements: true
 });
 
  http.listen(3000, function(){
@@ -34,7 +35,7 @@ var connection = mysql.createPool({
 
 
 app.get('/',function(req,res){
-	res.render('home', { layout: 'layout' })
+	res.render('home', { layout: 'layout',page: req.url })
 });
 app.post('/register',function(req,res){
 	var firstname=req.body.firstname
@@ -53,7 +54,7 @@ app.post('/register',function(req,res){
 		if (err) throw err;
 
 	}
-	res.render('succes', { layout: 'layout' })
+	res.render('succes', { layout: 'layout',page: req.url })
 		
 });
 	
@@ -65,7 +66,7 @@ app.get('/login',function(req,res){
 	}
 	else 
 	{
-		res.render('login_user', { layout: 'layout' })
+		res.render('login_user', { layout: 'layout',page: req.url })
 	};
 });
 
@@ -78,6 +79,7 @@ app.post('/login',function(req,res){
 	  	if(req.body.email==rows[i].email && req.body.pass==rows[i].pass){
 		  	ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 			req.session.login = true
+			req.session.customer=rows[i];
 		  }
 	  
 	  }
@@ -90,12 +92,43 @@ app.post('/login',function(req,res){
 	});
 	
 });
-
+app.post('/newService',function(req,res){
+	var amount=req.body.data.amount
+  	var serviceName=req.body.data.serviceName
+  	var loot=req.body.data.loot
+	var memory=req.body.data.memory
+	var space=req.body.data.space
+	var bandwith=req.body.data.bandwith
+	var request=req.body.data.request
+	var worker=req.body.data.worker
+	var newApp=req.body.data.newApp
+	var newDb=req.body.data.newDb
+	var status="STOP"
+	var ip="0.0.0.0"
+	var port ="8080"
+	connection.query('INSERT INTO `service`(`idservice`,`customer_idcustomer`, `namaservice`, `memory`, `space`, `bandwith`, `request`, `worker`, `status`, `ip`,`port`,`app_idapp`,`DB_idDB`)VALUES("",\''+req.session.customer.idCustomer+'\',\''+serviceName+'\',\''+memory+'\',\''+space+'\',\''+bandwith+'\',\''+request+'\',\''+worker+'\',\''+status+'\',\''+ip+'\',\''+port+'\',\''+newApp+'\',\''+newDb+'\')'), function(err, rows, fields) 
+	{
+		if (err){
+			console.log("error happened");
+			throw err;	
+		} 
+		
+	}
+	console.log(amount+" "+loot+" "+memory+" "+space+" "+bandwith+" "+request+" "+worker+" "+newDb+" "+newApp + " "+serviceName);
+	res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ status: "OK" }));
+	
+});
 app.get('/userpage',function(req,res){
 	if (req.session.login!=null && req.session.login==true)
 	{
-	  		res.render('user_page', { layout: 'layout' })
 
+		connection.query('SELECT * from app;SELECT * from db;', function(err, rows, fields) {
+	  		if (err) throw err;
+	  		req.session.apps=rows[0];
+	  		req.session.dbs=rows[1];
+	  		res.render('user_page', { layout: 'layout',page: req.url,customer:req.session.customer,allApp:req.session.apps,allDb:req.session.dbs});
+	  	}); 
 	}
 	else res.redirect('/login')
 });
@@ -106,5 +139,5 @@ app.get('/logout',function(req,res){
 });
 
 app.get('/succes',function(req,res){
-	res.render('succes', { layout: 'layout' })
+	res.render('succes', { layout: 'layout',page: req.url })
 });
