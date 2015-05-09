@@ -213,7 +213,7 @@
                 </div>
                 </div>
               </div>
-              </div
+              </div>
 
           <!-- END JUMBOTRON -->
           <!-- START CONTAINER FLUID -->
@@ -243,12 +243,13 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <%for(var i in userService){%>
                     <tr class="gradeA">
-                      <td class="center">1</td>
-                      <td class="center">Web Cloud</td>
-                      <td class="center">100/2500 MB remaining</td>
-                      <td class="center">1000/2000 used</td>
-                      <td class="center">125 GB remaining</td>
+                      <td class="center"><%=(parseInt(i)+1)%></td>
+                      <td class="center"><%= userService[i].namaservice%></td>
+                      <td class="center"><%= userService[i].space%></td>
+                      <td class="center"><%= userService[i].request%></td>
+                      <td class="center"><%= userService[i].bandwith%></td>
                         <td class="center">
                         <div class="btn-group btn-group-xs">
                         <a href="" class="btn btn-complete"><i class="fa fa-search"></i></a>
@@ -256,20 +257,7 @@
                         <a href="<?php echo site_url().'/admin/deletepas/'.$listpas['IDPASIEN'];?>" class="btn btn-danger" onClick="return delconfirm();"><i class="fa fa-trash-o"></i></a>
                         </td>
                     </tr>
-
-                    <tr class="gradeC">
-                      <td class="center">2</td>
-                      <td class="center">VPN Server</td>
-                      <td class="center">10/2500 MB remaining</td>
-                      <td class="center">10/1000 used</td>
-                      <td class="center">250 GB remaining</td>
-                        <td class="center">
-                        <div class="btn-group btn-group-xs">
-                        <a href="" class="btn btn-complete"><i class="fa fa-search"></i></a>
-                        <a class="btn btn-success"><i class="fa fa-pencil"></i></a>
-                        <a href="#" class="btn btn-danger" onClick="return delconfirm();"><i class="fa fa-trash-o"></i></a>
-                        </td>
-                    </tr>
+                    <%}%>
                   </tbody>
                 </table>
               </div>
@@ -283,7 +271,10 @@
 
         <!-- START COPYRIGHT -->
         <!-- START CONTAINER FLUID -->
-        <div class="container-fluid container-fixed-lg footer">
+        
+        <!-- END COPYRIGHT -->
+      </div>
+      <div class="container-fluid container-fixed-lg footer">
           <div class="copyright sm-text-center">
             <p class="small no-margin pull-left sm-pull-reset">
               <span class="hint-text">Copyright © 2015 </span>
@@ -297,8 +288,6 @@
             <div class="clearfix"></div>
           </div>
         </div>
-        <!-- END COPYRIGHT -->
-      </div>
 
       <script type="text/javascript">
       $(function() {

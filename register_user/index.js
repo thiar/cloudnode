@@ -49,11 +49,11 @@ app.post('/register',function(req,res){
 	var email=req.body.email
 	var pass=req.body.pass
 	var succes=false
-	connection.query('INSERT INTO `customer`(`idCustomer`,`firstname`, `lastname`, `address`, `country`, `province`, `city`, `zipcode`, `dob`, `email`, `pass`)VALUES ("",\''+firstname+'\',\''+lastname+'\',\''+address+'\',\''+country+'\',\''+province+'\',\''+city+'\',\''+zipcode+'\',\''+dob+'\',\''+email+'\',\''+pass+'\')'), function(err, rows, fields) 
+	connection.query('INSERT INTO `customer`(`idCustomer`,`firstname`, `lastname`, `address`, `country`, `province`, `city`, `zipcode`, `dob`, `email`, `pass`)VALUES ("",\''+firstname+'\',\''+lastname+'\',\''+address+'\',\''+country+'\',\''+province+'\',\''+city+'\',\''+zipcode+'\',\''+dob+'\',\''+email+'\',\''+pass+'\')', function(err, rows, fields) 
 	{
 		if (err) throw err;
 
-	}
+	});
 	res.render('succes', { layout: 'layout',page: req.url })
 		
 });
@@ -121,17 +121,17 @@ app.post('/newService',function(req,res){
 		
 	});
 	
-	
 });
 app.get('/userpage',function(req,res){
 	if (req.session.login!=null && req.session.login==true)
 	{
 
-		connection.query('SELECT * from app;SELECT * from db;', function(err, rows, fields) {
+		connection.query('SELECT * from app;SELECT * from db;SELECT namaservice,memory,space,bandwith,request,worker,status,ip,port from service where customer_idcustomer='+req.session.customer.idCustomer+';', function(err, rows, fields) {
 	  		if (err) throw err;
 	  		req.session.apps=rows[0];
 	  		req.session.dbs=rows[1];
-	  		res.render('user_page', { layout: 'layout',page: req.url,customer:req.session.customer,allApp:req.session.apps,allDb:req.session.dbs});
+
+	  		res.render('user_page', { layout: 'layout',page: req.url,customer:req.session.customer,allApp:req.session.apps,allDb:req.session.dbs,userService:rows[2]});
 	  	}); 
 	}
 	else res.redirect('/login')
