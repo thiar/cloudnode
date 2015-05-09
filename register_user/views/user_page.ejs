@@ -234,11 +234,12 @@
                 <table class="table table-hover demo-table-search" id="tableWithSearch">
                   <thead>
                     <tr>
-                        <th class="center" style="width:2%">No</th>
-                        <th class="center" style="width:20%">Apps Name</th>
-                        <th class="center" style="width:25%">Storage</th>
+                        <th class="center" style="width:5%">No</th>
+                        <th class="center" style="width:15%">Apps Name</th>
+                        <th class="center" style="width:15%">Storage</th>
                         <th class="center" style="width:15%">Request</th>
                         <th class="center" style="width:15%">Bandwidth</th>
+                        <th class="center" style="width:10%">Status</th>
                         <th class="center" style="width:10%">Action</th>
                     </tr>
                   </thead>
@@ -250,10 +251,11 @@
                       <td class="center"><%= userService[i].space%></td>
                       <td class="center"><%= userService[i].request%></td>
                       <td class="center"><%= userService[i].bandwith%></td>
+                      <td class="center"><%= userService[i].status%></td>
                         <td class="center">
                         <div class="btn-group btn-group-xs">
-                        <a href="" class="btn btn-complete"><i class="fa fa-search"></i></a>
-                        <a class="btn btn-success"><i class="fa fa-pencil"></i></a>
+                        <a id="<%= userService[i].namaservice%>"class="btn btn-complete start-service"><i class="fa fa-play"></i></a>
+                        <a class="btn btn-success"><i class="fa fa-stop"></i></a>
                         <a href="<?php echo site_url().'/admin/deletepas/'.$listpas['IDPASIEN'];?>" class="btn btn-danger" onClick="return delconfirm();"><i class="fa fa-trash-o"></i></a>
                         </td>
                     </tr>
@@ -290,7 +292,10 @@
         </div>
 
       <script type="text/javascript">
-      $(function() {
+  $(function() {
+    $(".start-service").click(function(){
+      console.log(this.id);
+    })
     $( "#slider-range-min" ).slider({
       range: "min",
       value: 1,
