@@ -130,7 +130,7 @@ margin: 0px;
 z-index: 999;
 }
 .ui-slider {
-height: 5px;
+height: 2px;
 border: none;
 background: rgba(0,0,0,0.1);
 -webkit-box-shadow: 0px 2px 2px rgba(255,255,255,0.25), inset 0px 1px 3px rgba(0,0,0,0.3);
@@ -225,7 +225,7 @@ display: inline-block;
 text-align: center;
 font-family: 'Exo', sans-serif;
 font-weight: 800;
-font-size: 3rem;
+font-size: 2rem;
 color: #529e0e;
 background: transparent;
 border: none;
@@ -241,7 +241,7 @@ display: inline-block;
 text-align: right;
 font-family: 'Exo', sans-serif;
 font-weight: 400;
-font-size: 2rem;
+font-size: 1rem;
 color: #529e0e;
 background: transparent;
 border: none;
