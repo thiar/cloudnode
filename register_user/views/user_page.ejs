@@ -254,8 +254,8 @@
                       <td class="center"><%= userService[i].status%></td>
                         <td class="center">
                         <div class="btn-group btn-group-xs">
-                        <a id="<%= userService[i].namaservice%>"class="btn btn-complete start-service"><i class="fa fa-play"></i></a>
-                        <a class="btn btn-success"><i class="fa fa-stop"></i></a>
+                        <a id="<%= userService[i].namaservice%>" class="btn btn-complete start-service"><i class="fa fa-play"></i></a>
+                        <a id="<%= userService[i].namaservice%>" class="btn btn-success stop-service"><i class="fa fa-stop"></i></a>
                         <a href="<?php echo site_url().'/admin/deletepas/'.$listpas['IDPASIEN'];?>" class="btn btn-danger" onClick="return delconfirm();"><i class="fa fa-trash-o"></i></a>
                         </td>
                     </tr>
@@ -294,6 +294,9 @@
       <script type="text/javascript">
   $(function() {
     $(".start-service").click(function(){
+      console.log(this.id);
+    })
+    $(".stop-service").click(function(){
       console.log(this.id);
     })
     $( "#slider-range-min" ).slider({
