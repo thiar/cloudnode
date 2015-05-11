@@ -380,7 +380,40 @@
       }
       //console.log(amount+" "+loot+" "+memory+" "+space+" "+bandwith+" "+request+" "+worker+" "+newDb+" "+newApp + " "+serviceName);
       $.post("/newService", {data:data}, function(result){
-        console.log(result);
+        if(result.status=="OK")
+        {
+            bootbox.dialog({
+              message: "Service successfully created",
+              title: "Create new service",
+              buttons: {
+                success: {
+                  label: "OK",
+                  className: "btn-success",
+                  callback: function() {
+                    window.location='/userpage';
+                  }
+                }
+              }
+            });
+
+        }
+        else
+        {
+          bootbox.dialog({
+              message: "Failed create new service, duplicate name",
+              title: "Create new service",
+              buttons: {
+                success: {
+                  label: "OK",
+                  className: "btn-danger",
+                  callback: function() {
+                    
+                  }
+                }
+              }
+            });
+        }
+        console.log(result)
       });
       return false; // avoid to execute the actual submit of the form.
   });
