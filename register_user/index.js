@@ -145,3 +145,4 @@ app.get('/logout',function(req,res){
 app.get('/succes',function(req,res){
 	res.render('succes', { layout: 'layout',page: req.url })
 });
+
