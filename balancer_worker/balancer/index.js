@@ -1,6 +1,6 @@
 var net = require('net');
 
-// parse "80" and "localhost:80" or even "42mEANINg-life.com:80"
+
 var addrRegex = /^(([a-zA-Z\-\.0-9]+):)?(\d+)$/;
 var ip= {}
 var addr = {
