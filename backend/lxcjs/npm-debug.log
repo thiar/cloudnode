@@ -1,0 +1,64 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   'http-proxy' ]
+2 info using npm@2.7.4
+3 info using node@v0.12.2
+4 verbose node symlink C:\Program Files\nodejs\\node.exe
+5 warn package.json lxc@0.0.5 No README data
+6 silly cache add args [ 'http-proxy', null ]
+7 verbose cache add spec http-proxy
+8 silly cache add parsed spec { raw: 'http-proxy',
+8 silly cache add   scope: null,
+8 silly cache add   name: 'http-proxy',
+8 silly cache add   rawSpec: '',
+8 silly cache add   spec: '*',
+8 silly cache add   type: 'range' }
+9 verbose addNamed http-proxy@*
+10 silly addNamed semver.valid null
+11 silly addNamed semver.validRange *
+12 silly addNameRange { name: 'http-proxy', range: '*', hasData: false }
+13 silly mapToRegistry name http-proxy
+14 silly mapToRegistry using default registry
+15 silly mapToRegistry registry https://registry.npmjs.org/
+16 silly mapToRegistry uri https://registry.npmjs.org/http-proxy
+17 verbose addNameRange registry:https://registry.npmjs.org/http-proxy not in flight; fetching
+18 verbose request uri https://registry.npmjs.org/http-proxy
+19 verbose request no auth needed
+20 info attempt registry request try #1 at 21:45:24
+21 verbose request id 6581a9991b4a4139
+22 http request GET https://registry.npmjs.org/http-proxy
+23 info retry will retry, error on last attempt: Error: tunneling socket could not be established, cause=write EPROTO 101057795:error:140770FC:SSL routines:SSL23_GET_SERVER_HELLO:unknown protocol:openssl\ssl\s23_clnt.c:782:
+24 info attempt registry request try #2 at 21:45:34
+25 http request GET https://registry.npmjs.org/http-proxy
+26 info retry will retry, error on last attempt: Error: tunneling socket could not be established, cause=write EPROTO 101057795:error:140770FC:SSL routines:SSL23_GET_SERVER_HELLO:unknown protocol:openssl\ssl\s23_clnt.c:782:
+27 info attempt registry request try #3 at 21:46:34
+28 http request GET https://registry.npmjs.org/http-proxy
+29 verbose stack Error: tunneling socket could not be established, cause=write EPROTO 101057795:error:140770FC:SSL routines:SSL23_GET_SERVER_HELLO:unknown protocol:openssl\ssl\s23_clnt.c:782:
+29 verbose stack
+29 verbose stack     at ClientRequest.onError (C:\Program Files\nodejs\node_modules\npm\node_modules\request\node_modules\tunnel-agent\index.js:168:17)
+29 verbose stack     at ClientRequest.g (events.js:199:16)
+29 verbose stack     at ClientRequest.emit (events.js:107:17)
+29 verbose stack     at TLSSocket.socketErrorListener (_http_client.js:271:9)
+29 verbose stack     at TLSSocket.emit (events.js:129:20)
+29 verbose stack     at onwriteError (_stream_writable.js:317:10)
+29 verbose stack     at onwrite (_stream_writable.js:335:5)
+29 verbose stack     at WritableState.onwrite (_stream_writable.js:105:5)
+29 verbose stack     at fireErrorCallbacks (net.js:456:13)
+29 verbose stack     at TLSSocket.Socket._destroy (net.js:495:3)
+30 verbose cwd D:\AGUS FILE\KULIAH\SMT 6\CLOUD - Royyana\cloudnode\backend\lxcjs
+31 error Windows_NT 6.2.9200
+32 error argv "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "http-proxy"
+33 error node v0.12.2
+34 error npm  v2.7.4
+35 error code ECONNRESET
+36 error network tunneling socket could not be established, cause=write EPROTO 101057795:error:140770FC:SSL routines:SSL23_GET_SERVER_HELLO:unknown protocol:openssl\ssl\s23_clnt.c:782:
+36 error network
+36 error network This is most likely not a problem with npm itself
+36 error network and is related to network connectivity.
+36 error network In most cases you are behind a proxy or have bad network settings.
+36 error network
+36 error network If you are behind a proxy, please make sure that the
+36 error network 'proxy' config is set properly.  See: 'npm help config'
+37 verbose exit [ 1, true ]
