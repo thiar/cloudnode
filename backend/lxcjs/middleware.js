@@ -184,20 +184,72 @@ function req_stop(servicename)
     });
 }
 
+function start_lxc(servicename,ip_address,worker_ip)
+{
+    var stop_service = requestify.request('http://'+worker_ip+':3000/start', {
+        method: 'POST',
+        body: {
+            servicename: servicename,
+            ip_address: ip_address
+        },
+        headers: {
+            'X-Forwarded-By': 'me'
+        },
+        cookies: {
+            mySession: 'some cookie value'
+        },
+
+        dataType: 'json'        
+    })
+    .then(function(response) {
+        // get the response body 
+        response.getBody();
+    });
+}
+
+function stop_lxc(servicename,ip_address,worker_ip)
+{
+    var stop_service = requestify.request('http://'+worker_ip+':3000/stop', {
+        method: 'POST',
+        body: {
+            servicename: servicename,
+            ip_address:ip_address
+        },
+        headers: {
+            'X-Forwarded-By': 'me'
+        },
+        cookies: {
+            mySession: 'some cookie value'
+        },
+
+        dataType: 'json'        
+    })
+    .then(function(response) {
+        // get the response body 
+        response.getBody();
+    });
+}
 function control_lxc(servicename, rows, option, request)
 {  
-    if(option == 'create') create.clone(servicename);
+    if(option == 'create'){
+        create.clone(servicename);
+    }
     else if(option == 'start') 
     {
         if(rows.length > 1)
         {
             // create.start(servicename, rows[0].ip_address);
             // create.start(servicename, rows[1].ip_address);
+            start_lxc(servicename,rows[0].ip_address,"localhost")
+            start_lxc(servicename,rows[1].ip_address,"10.151.43.51")
             console.log("start 2 worker");
         }
         else
+        {            
             // create.start(servicename, rows[0].ip_address);
+            start_lxc(servicename,rows[0].ip_address,"10.151.43.51")
             console.log("start 1 worker");
+        }
 
         req_start(servicename, request, rows);
     }
@@ -206,10 +258,14 @@ function control_lxc(servicename, rows, option, request)
     {
         // create.stop(servicename);
         console.log("stop worker");
+        stop_lxc(servicename,rows[0].ip_address,"10.151.36.38")
+        stop_lxc(servicename,rows[1].ip_address,"10.151.36.206")
         req_stop(servicename);
     }
 
-    else if(option == 'delete') create.destroy(servicename);
+    else if(option == 'delete'){
+      create.destroy(servicename);  
+    } 
 }
 
 app.post("/", function(req, res){
@@ -222,6 +278,6 @@ app.post("/", function(req, res){
     res.json(result);
 })
 
-app.listen(3000);
+app.listen(4000);
 
 
