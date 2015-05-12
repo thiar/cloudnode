@@ -1,3 +1,7 @@
+// var net = require('net'),
+//  fs = require('fs');
+// var cp = require('child_process');
+// var mm = require('minimist');
 var sys = require ('sys'),
 	url = require('url'),
 	http = require('http'),
@@ -14,7 +18,7 @@ var create = require('./create');
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser());
 
-var pool = mysql.createPool({
+var pool      =    mysql.createPool({
     connectionLimit : 100, //important
     host     : 'localhost',
     user     : 'root',
@@ -23,9 +27,7 @@ var pool = mysql.createPool({
     debug    :  false
 });
 
-var check;
-
-function handle_database(req, res) {
+function handle_database(req,res) {
     var re = / /gi;
     var data = req.body.servicename.replace(re, "_");
     var worker = req.body.worker;
@@ -48,36 +50,16 @@ function handle_database(req, res) {
             if(rows != undefined && rows.length > 0) {
                 var id_address = rows[0].id_service;
                 // console.log(id_address);
-                var status = rows[0].status;
-                if((status != "START" && option == "START") || (status != "STOP" && option == "STOP"))
-                {
-                    connection.query("SELECT * from address where id_service='"+id_address+"'", function(err, rows, fields){
+                connection.query("SELECT * from address where id_service='"+id_address+"'", function(err, rows, fields){
                     //res.json(rows);
-                        
-                        // console.log("1");
-                        // console.log(rows);
-                        control_lxc(data, rows, option, request);
-
-                        connection.query("UPDATE service SET status='"+option+"' WHERE nama_service='"+data+"'",function(err,rows, fields){
-                            
-                            console.log("UPDATE STATUS");
-                        })
-                    })
-                    
-                }
-                else
-                {
-                    check = 0;
-                    var result = {result : 'YOUR SERVICE IS ALREADY '+option}
-                    res.json(result);
-                    return;
-                    
-                }
-                          
+                    control_lxc(data, rows, option, request);
+                    // console.log("1");
+                    // console.log(rows);
+                })          
             }
             else
             {
-              connection.query("INSERT INTO service (id_service, nama_service, status) VALUES ('"+connection.threadId+"','"+data+"', 'START')",function(err,rows, fields){
+              connection.query("INSERT INTO service (id_service, nama_service) VALUES ('"+connection.threadId+"','"+data+"')",function(err,rows, fields){
                 if(worker == 1)
                 {
                     connection.query("UPDATE address SET id_service="+connection.threadId+" WHERE id_service=0 limit 1",function(err,rows, fields){
@@ -86,7 +68,7 @@ function handle_database(req, res) {
                             //res.json(rows);
                             // console.log("2");
                             // console.log(rows);
-                            control_lxc(data, rows, option, request);
+                            control_lxc(data, rows, option, request );
                         })                    
                     }) 
 
@@ -105,14 +87,6 @@ function handle_database(req, res) {
                 }                                
               })
             }
-            var result = {
-                status : status,
-                ip_app : ip_address,
-                port_app : port_address,
-                ip_balancer : ip_balancer,
-                port_balancer
-            }
-            res.json(result); 
                        
         });
 
@@ -255,13 +229,12 @@ function stop_lxc(servicename,ip_address,worker_ip)
         response.getBody();
     });
 }
-
 function control_lxc(servicename, rows, option, request)
 {  
     if(option == 'create'){
         create.clone(servicename);
     }
-    else if(option == 'START') 
+    else if(option == 'start') 
     {
         if(rows.length > 1)
         {
@@ -281,20 +254,18 @@ function control_lxc(servicename, rows, option, request)
         req_start(servicename, request, rows);
     }
 
-    else if(option == 'STOP') 
+    else if(option == 'stop') 
     {
         // create.stop(servicename);
         console.log("stop worker");
-        stop_lxc(servicename,rows[0].ip_address,"10.151.36.24")
-        stop_lxc(servicename,rows[1].ip_address,"10.151.43.51")
+        stop_lxc(servicename,rows[0].ip_address,"10.151.36.38")
+        stop_lxc(servicename,rows[1].ip_address,"10.151.36.206")
         req_stop(servicename);
-        req_stop(servicename+'_root');
     }
 
     else if(option == 'delete'){
       create.destroy(servicename);  
-    }
-    
+    } 
 }
 
 app.post("/", function(req, res){
@@ -302,13 +273,9 @@ app.post("/", function(req, res){
     var option = req.body.option;
     
     handle_database(req, res);
-    // console.log(check);
-    // if(!check)
-    // {
-    //     var result = {result : 'OK'}
-    //     // res.json(result);
-    // }   
-    
+       
+    var result = {result : 'OK'}
+    res.json(result);
 })
 
 app.listen(4000);
