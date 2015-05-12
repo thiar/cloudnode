@@ -259,6 +259,7 @@
 
   <script type="text/javascript">
     $(function() {
+
       $(".start-service").click(function(){
       var id=this.id
        bootbox.dialog({
@@ -276,7 +277,13 @@
             label: "Start",
             className: "btn-complete",
             callback: function() {
-              console.log(id)
+               var data={
+                option:"start",
+                serviceName:id
+              }
+              $.post("/start:service", {data:data}, function(result){
+
+              })
             }
           }
         }

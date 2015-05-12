@@ -136,7 +136,10 @@ app.get('/userpage',function(req,res){
 	}
 	else res.redirect('/login')
 });
-
+app.post('/start:service',function(req,res){
+	console.log(req.body)
+	
+})
 app.get('/logout',function(req,res){
 	req.session.destroy()
 	res.redirect('/login')
