@@ -88,3 +88,22 @@ exports.destroy=function(vm){
 //    });
 //}
 
+exports.config_ip=function(vm,ip){
+    var c = exec('cat > /var/lib/lxc/'+vm+'/rootfs/etc/network/interfaces << EOF'+'\n'+
+  'auto eth0\n'+
+  'iface eth0 inet static\n'+
+  'address '+ip+'\n'+
+  'netmask 255.255.255.0\n'+
+  'gateway 10.0.3.1'+'\n'+'EOF');
+    c.stdout.on('data', function (data) {
+        console.log('stdout: ' + data);
+    });
+    c.stderr.on('data', function (data) {
+        console.log('stderr: ' + data);
+    });
+   c.on('exit', function(code){
+      if(0 == code){
+            console.log(vm + " OFF");
+        }
+    });
+}
