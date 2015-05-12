@@ -1,0 +1,56 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'c:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   'forever' ]
+2 info using npm@2.7.4
+3 info using node@v0.12.2
+4 silly cache add args [ 'forever', null ]
+5 verbose cache add spec forever
+6 silly cache add parsed spec { raw: 'forever',
+6 silly cache add   scope: null,
+6 silly cache add   name: 'forever',
+6 silly cache add   rawSpec: '',
+6 silly cache add   spec: '*',
+6 silly cache add   type: 'range' }
+7 verbose addNamed forever@*
+8 silly addNamed semver.valid null
+9 silly addNamed semver.validRange *
+10 silly addNameRange { name: 'forever', range: '*', hasData: false }
+11 silly mapToRegistry name forever
+12 silly mapToRegistry using default registry
+13 silly mapToRegistry registry https://registry.npmjs.org/
+14 silly mapToRegistry uri https://registry.npmjs.org/forever
+15 verbose addNameRange registry:https://registry.npmjs.org/forever not in flight; fetching
+16 verbose request uri https://registry.npmjs.org/forever
+17 verbose request no auth needed
+18 info attempt registry request try #1 at 15:33:33
+19 verbose request id 14111c02bc2f0c73
+20 http request GET https://registry.npmjs.org/forever
+21 info retry will retry, error on last attempt: Error: connect ECONNREFUSED
+22 info attempt registry request try #2 at 15:33:45
+23 http request GET https://registry.npmjs.org/forever
+24 info retry will retry, error on last attempt: Error: connect ECONNREFUSED
+25 info attempt registry request try #3 at 15:34:46
+26 http request GET https://registry.npmjs.org/forever
+27 verbose stack Error: connect ECONNREFUSED
+27 verbose stack     at exports._errnoException (util.js:746:11)
+27 verbose stack     at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1000:19)
+28 verbose cwd d:\AGUS FILE\KULIAH\SMT 6\CLOUD - Royyana\cloudnode
+29 error Windows_NT 6.2.9200
+30 error argv "c:\\Program Files\\nodejs\\node.exe" "c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "forever"
+31 error node v0.12.2
+32 error npm  v2.7.4
+33 error code ECONNREFUSED
+34 error errno ECONNREFUSED
+35 error syscall connect
+36 error Error: connect ECONNREFUSED
+36 error     at exports._errnoException (util.js:746:11)
+36 error     at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1000:19)
+36 error  { [Error: connect ECONNREFUSED]
+36 error   code: 'ECONNREFUSED',
+36 error   errno: 'ECONNREFUSED',
+36 error   syscall: 'connect' }
+37 error If you are behind a proxy, please make sure that the
+37 error 'proxy' config is set properly.  See: 'npm help config'
+38 verbose exit [ 1, true ]

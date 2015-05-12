@@ -236,8 +236,8 @@
                         <td class="center">
                         <div class="btn-group btn-group-xs">
                         <a id="<%= userService[i].namaservice%>" class="btn btn-complete start-service"><i class="fa fa-play"></i></a>
-                        <a id="<%= userService[i].namaservice%>" class="btn btn-success stop-service"><i class="fa fa-stop"></i></a>
-                        <a href="<?php echo site_url().'/admin/deletepas/'.$listpas['IDPASIEN'];?>" class="btn btn-danger" onClick="return delconfirm();"><i class="fa fa-trash-o"></i></a>
+                        <a id="<%= userService[i].namaservice%>" class="btn btn-primary stop-service"><i class="fa fa-stop"></i></a>
+                        <a id="<%= userService[i].namaservice%>" class="btn btn-danger delete-service" ><i class="fa fa-trash-o"></i></a>
                         </td>
                     </tr>
                     <%}%>
@@ -260,11 +260,74 @@
   <script type="text/javascript">
     $(function() {
       $(".start-service").click(function(){
-      console.log(this.id);
+      var id=this.id
+       bootbox.dialog({
+        message: "Are you sure start "+id+" ?",
+        title: "Start Apps",
+        buttons: {
+          success: {
+            label: "Cancel",
+            className: "btn-info",
+            callback: function() {
+              
+            }
+          },
+          buttons: {
+            label: "Start",
+            className: "btn-complete",
+            callback: function() {
+              console.log(id)
+            }
+          }
+        }
+      });
     })
 
     $(".stop-service").click(function(){
-      console.log(this.id);
+      var id=this.id
+       bootbox.dialog({
+        message: "Are you sure stop "+id+" ?",
+        title: "Stop Apps",
+        buttons: {
+          success: {
+            label: "Cancel",
+            className: "btn-info",
+            callback: function() {
+              
+            }
+          },
+          buttons: {
+            label: "Stop",
+            className: "btn-primary",
+            callback: function() {
+              console.log(id)
+            }
+          }
+        }
+      });
+    });
+    $(".delete-service").click(function(){
+       var id=this.id
+       bootbox.dialog({
+        message: "Are you sure delete "+id+" ?",
+        title: "Delete Apps",
+        buttons: {
+          success: {
+            label: "Cancel",
+            className: "btn-info",
+            callback: function() {
+              
+            }
+          },
+          buttons: {
+            label: "Delete",
+            className: "btn-danger",
+            callback: function() {
+              console.log(id)
+            }
+          }
+        }
+      }); 
     });
     $( "#slider-range-min" ).slider({
       range: "min",
@@ -317,7 +380,40 @@
       }
       //console.log(amount+" "+loot+" "+memory+" "+space+" "+bandwith+" "+request+" "+worker+" "+newDb+" "+newApp + " "+serviceName);
       $.post("/newService", {data:data}, function(result){
-        console.log(result);
+        if(result.status=="OK")
+        {
+            bootbox.dialog({
+              message: "Service successfully created",
+              title: "Create new service",
+              buttons: {
+                success: {
+                  label: "OK",
+                  className: "btn-success",
+                  callback: function() {
+                    window.location='/userpage';
+                  }
+                }
+              }
+            });
+
+        }
+        else
+        {
+          bootbox.dialog({
+              message: "Failed create new service, duplicate name",
+              title: "Create new service",
+              buttons: {
+                success: {
+                  label: "OK",
+                  className: "btn-danger",
+                  callback: function() {
+                    
+                  }
+                }
+              }
+            });
+        }
+        console.log(result)
       });
       return false; // avoid to execute the actual submit of the form.
   });

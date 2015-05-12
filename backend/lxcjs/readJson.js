@@ -1,11 +1,12 @@
 var sys = require ('sys'),
 	url = require('url'),
 	http = require('http'),
-	qs = require('querystring');
+	qs = require('querystring'),
+    requestify = require('requestify');    
 
 var net = require('net'),
 	fs = require('fs');
-var config = require('./jsonFile.json');
+//var config = require('./jsonFile.json');
 var cp = require('child_process');
 var mm = require('minimist');
 var create = require('./create');
@@ -39,6 +40,79 @@ var server = http.createServer(function (req, res) {
         res.write( JSON.stringify( url_parts.query ) );
         res.end();
     }               
+});
+
+var req_balancer = requestify.request('http://10.151.43.162:1000/start', {
+    method: 'POST',
+    body: {
+        servicename: 'serviceku',
+        request: '1000',
+        host: '10.151.43.162:9000',
+        worker1: '10.151.36.24:3000'
+    },
+    headers: {
+        'X-Forwarded-By': 'me'
+    },
+    cookies: {
+        mySession: 'some cookie value'
+    },
+    // auth: {
+    //     username: 'foo',
+    //     password: 'bar'
+    // },
+    dataType: 'json'        
+})
+.then(function(response) {
+    // get the response body 
+    response.getBody();
+ 
+    // get the response headers 
+    response.getHeaders();
+ 
+    // get specific response header 
+    response.getHeader('Accept');
+ 
+    // get the code 
+    response.getCode();
+    
+    // get the raw response body 
+    response.body;
+});
+var stop_service = requestify.request('http://10.151.43.162:1000/stop', {
+    method: 'POST',
+    body: {
+        servicename: 'serviceku',
+        request: '1000',
+        host: '10.151.43.162:9000',
+        worker1: '10.151.36.24:3000'
+    },
+    headers: {
+        'X-Forwarded-By': 'me'
+    },
+    cookies: {
+        mySession: 'some cookie value'
+    },
+    // auth: {
+    //     username: 'foo',
+    //     password: 'bar'
+    // },
+    dataType: 'json'        
+})
+.then(function(response) {
+    // get the response body 
+    response.getBody();
+ 
+    // get the response headers 
+    response.getHeaders();
+ 
+    // get specific response header 
+    response.getHeader('Accept');
+ 
+    // get the code 
+    response.getCode();
+    
+    // get the raw response body 
+    response.body;
 });
 server.listen( 9080 );
 
