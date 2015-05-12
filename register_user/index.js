@@ -24,7 +24,7 @@ app.use(session({
 var connection = mysql.createPool({
   host     : '',
   user     : 'root',
-  password : '',
+  password : 'a',
   database : 'cloudnode',
   multipleStatements: true
 });
