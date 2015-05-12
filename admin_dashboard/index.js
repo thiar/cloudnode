@@ -11,9 +11,9 @@ app.use(bodyParser.urlencoded());
 app.use(partial())
 app.use(expressLayouts)
 app.set('view engine', 'ejs')
-app.set('layout', 'layout')
-/*route declaration*/
+//app.set('layout', 'layout')
 
+/*route declaration*/
 app.use(session({
   secret: 'keyboard cat',
   resave: false,
