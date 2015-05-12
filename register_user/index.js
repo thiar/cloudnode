@@ -24,7 +24,7 @@ app.use(session({
 var connection = mysql.createPool({
   host     : '',
   user     : 'root',
-  password : '',
+  password : 'a',
   database : 'cloudnode',
   multipleStatements: true
 });
@@ -37,6 +37,7 @@ var connection = mysql.createPool({
 app.get('/',function(req,res){
 	res.render('home', { layout: 'layout',page: req.url })
 });
+
 app.post('/register',function(req,res){
 	var firstname=req.body.firstname
 	var lastname=req.body.lastname
