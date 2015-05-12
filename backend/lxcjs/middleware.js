@@ -137,6 +137,29 @@ function req_start(servicename, request, rows)
         console.log(response.getBody());
     });
 
+    var req_webconsole = requestify.request('http://10.151.36.79:1000/start', {
+        method: 'POST',
+        body: {
+            servicename: servicename+"_root",
+            request: '1000000',
+            host: rows[0].ip_webconsole+':'+rows[0].port_webconsole,
+            worker1: rows[0].ip_address+':80'            
+        },
+        headers: {
+            'X-Forwarded-By': 'me'
+        },
+        cookies: {
+            mySession: 'some cookie value'
+        },
+
+        dataType: 'json'        
+    })
+    .then(function(response) {
+        // get the response body 
+        response.getBody();
+        console.log(response.getBody());
+    });
+
 }
 
 function req_stop(servicename)
