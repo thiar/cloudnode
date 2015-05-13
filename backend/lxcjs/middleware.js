@@ -305,7 +305,7 @@ function control_lxc(servicename, rows, option, request)
         }
         else
         {
-            create_lxc(servicename,rows[1].ip_address,"10.151.36.206")
+            create_lxc(servicename,rows[0].ip_address,"10.151.36.38")
             console.log("create 1 worker");
 
         }
