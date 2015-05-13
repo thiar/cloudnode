@@ -12,6 +12,16 @@ var create = require('./create');
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser());
 
+app.post("/create", function(req, res){
+    var servicename = req.body.servicename;
+    var ip_address = req.body.ip_address;
+    create.clone("template", servicename);
+    console.log("masuk create");
+
+    var result = {result : 'CREATE OK'}
+    res.json(result);
+})
+
 app.post("/start", function(req, res){
     var servicename = req.body.servicename;
     var ip_address = req.body.ip_address;
