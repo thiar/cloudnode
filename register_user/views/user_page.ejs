@@ -259,8 +259,10 @@
 
   <script type="text/javascript">
     $(function() {
+
       $(".start-service").click(function(){
       var id=this.id
+
        bootbox.dialog({
         message: "Are you sure start "+id+" ?",
         title: "Start Apps",
@@ -276,7 +278,15 @@
             label: "Start",
             className: "btn-complete",
             callback: function() {
-              console.log(id)
+               
+               var data={
+                option:"START",
+                servicename:id
+              }
+              console.log(data)
+              $.post("/start:service", {data:data}, function(result){
+
+              })
             }
           }
         }
@@ -300,7 +310,14 @@
             label: "Stop",
             className: "btn-primary",
             callback: function() {
-              console.log(id)
+               var data={
+                  option:"STOP",
+                  servicename:id
+                }
+                console.log(data)
+                $.post("/stop:service", {data:data}, function(result){
+
+                })
             }
           }
         }

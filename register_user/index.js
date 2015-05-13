@@ -6,6 +6,7 @@ var bodyParser = require("body-parser");
 var http = require('http').Server(app);
 var mysql = require('mysql');
 var partial = require('express-partial');
+var requestify = require('requestify')
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded());
 app.use(partial())
@@ -24,7 +25,7 @@ app.use(session({
 var connection = mysql.createPool({
   host     : '',
   user     : 'root',
-  password : 'a',
+  password : '',
   database : 'cloudnode',
   multipleStatements: true
 });
@@ -137,6 +138,29 @@ app.get('/userpage',function(req,res){
 	}
 	else res.redirect('/login')
 });
+app.post('/start:service',function(req,res){
+	console.log(req.body)
+	connection.query('SELECT namaservice,memory,space,bandwith,request,worker,status,ip,port from service where customer_idcustomer='+req.session.customer.idCustomer+';', function(err, rows, fields) {
+  		sendreq(req,rows,res);
+  		//console.log(req.body.data.option)
+  		//console.log(rows[0].worker.split(" ")[0])
+  		//console.log(rows[0].request.split(" ")[0])
+	
+  	});
+	
+})
+app.post('/stop:service',function(req,res){
+	console.log(req.body)
+	connection.query('SELECT namaservice,memory,space,bandwith,request,worker,status,ip,port from service where customer_idcustomer='+req.session.customer.idCustomer+';', function(err, rows, fields) {
+  		sendreq(req,rows,res);
+  		//console.log(req.body.data.option)
+  		//console.log(rows[0].worker.split(" ")[0])
+  		//console.log(rows[0].request.split(" ")[0])
+	
+  	});
+	
+})
+
 
 app.get('/logout',function(req,res){
 	req.session.destroy()
@@ -147,3 +171,28 @@ app.get('/succes',function(req,res){
 	res.render('succes', { layout: 'layout',page: req.url })
 });
 
+function sendreq(req,rows,res)
+{
+    var stop_service = requestify.request('http://10.151.36.24:4000/', {
+        method: 'POST',
+        body: {
+            servicename: req.body.data.servicename,
+            option: req.body.data.option,
+            worker: rows[0].worker.split(" ")[0],
+            request:rows[0].request.split(" ")[0]
+        },
+        headers: {
+            'X-Forwarded-By': 'me'
+        },
+        cookies: {
+            mySession: 'some cookie value'
+        },
+
+        dataType: 'json'        
+    })
+    .then(function(response) {
+        // get the response body 
+        console.log(response.getBody());
+        res.send(response.getBody());
+    });
+}
