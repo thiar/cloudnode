@@ -47,7 +47,6 @@ function handle_database(req, res) {
             // console.log(rows);
             if(rows != undefined && rows.length > 0) {
                 var id_address = rows[0].id_service;
-                // console.log(id_address);
                 var status = rows[0].status;
                 if((status != "START" && option == "START") || (status != "STOP" && option == "STOP"))
                 {
@@ -57,6 +56,14 @@ function handle_database(req, res) {
                         // console.log("1");
                         // console.log(rows);
                         control_lxc(data, rows, option, request);
+                        var result = {
+                            status : option,
+                            ip_webconsole : rows[0].ip_webconsole,
+                            port_webconsole : rows[0].port_webconsole,
+                            ip_balancer : rows[0].ip_balancer,
+                            port_balancer : rows[0].port_balancer
+                        }
+                        res.json(result); 
 
                         connection.query("UPDATE service SET status='"+option+"' WHERE nama_service='"+data+"'",function(err,rows, fields){
                             
@@ -87,6 +94,14 @@ function handle_database(req, res) {
                             // console.log("2");
                             // console.log(rows);
                             control_lxc(data, rows, option, request);
+                            var result = {
+                                status : option,
+                                ip_webconsole : rows[0].ip_webconsole,
+                                port_webconsole : rows[0].port_webconsole,
+                                ip_balancer : rows[0].ip_balancer,
+                                port_balancer : rows[0].port_balancer
+                            }
+                            res.json(result); 
                         })                    
                     }) 
 
@@ -100,19 +115,20 @@ function handle_database(req, res) {
                             // console.log("3");
                             // console.log(rows);
                             control_lxc(data, rows, option, request);
+                            var result = {
+                                status : option,
+                                ip_webconsole : rows[0].ip_webconsole,
+                                port_webconsole : rows[0].port_webconsole,
+                                ip_balancer : rows[0].ip_balancer,
+                                port_balancer : rows[0].port_balancer
+                            }
+                            res.json(result); 
                         })                    
                     }) 
                 }                                
               })
             }
-            var result = {
-                status : status,
-                ip_app : ip_address,
-                port_app : port_address,
-                ip_balancer : ip_balancer,
-                port_balancer
-            }
-            res.json(result); 
+            
                        
         });
 
@@ -210,6 +226,28 @@ function req_stop(servicename)
     });
 }
 
+function create_lxc(servicename,ip_address,worker_ip)
+{
+    var stop_service = requestify.request('http://'+worker_ip+':3000/create', {
+        method: 'POST',
+        body: {
+            servicename: servicename,
+        },
+        headers: {
+            'X-Forwarded-By': 'me'
+        },
+        cookies: {
+            mySession: 'some cookie value'
+        },
+
+        dataType: 'json'        
+    })
+    .then(function(response) {
+        // get the response body 
+        response.getBody();
+    });
+}
+
 function start_lxc(servicename,ip_address,worker_ip)
 {
     var stop_service = requestify.request('http://'+worker_ip+':3000/start', {
@@ -239,7 +277,7 @@ function stop_lxc(servicename,ip_address,worker_ip)
         method: 'POST',
         body: {
             servicename: servicename,
-            ip_address:ip_address
+            ip_address: ip_address
         },
         headers: {
             'X-Forwarded-By': 'me'
@@ -258,8 +296,21 @@ function stop_lxc(servicename,ip_address,worker_ip)
 
 function control_lxc(servicename, rows, option, request)
 {  
-    if(option == 'create'){
-        create.clone(servicename);
+    if(option == 'CREATE'){
+        if(rows.length > 1)
+        {
+            create_lxc(servicename,rows[0].ip_address,"10.151.36.38")
+            create_lxc(servicename,rows[1].ip_address,"10.151.36.206")
+            console.log("create 2 worker");
+        }
+        else
+        {
+            create_lxc(servicename,rows[0].ip_address,"10.151.36.38")
+            console.log("create 1 worker");
+
+        }
+        //create.clone(servicename);
+        
     }
     else if(option == 'START') 
     {
@@ -267,14 +318,14 @@ function control_lxc(servicename, rows, option, request)
         {
             // create.start(servicename, rows[0].ip_address);
             // create.start(servicename, rows[1].ip_address);
-            start_lxc(servicename,rows[0].ip_address,"localhost")
-            start_lxc(servicename,rows[1].ip_address,"10.151.43.51")
+            start_lxc(servicename,rows[0].ip_address,"10.151.36.38")
+            start_lxc(servicename,rows[1].ip_address,"10.151.36.206")
             console.log("start 2 worker");
         }
         else
         {            
             // create.start(servicename, rows[0].ip_address);
-            start_lxc(servicename,rows[0].ip_address,"10.151.43.51")
+            start_lxc(servicename,rows[0].ip_address,"10.151.36.206")
             console.log("start 1 worker");
         }
 
@@ -285,8 +336,8 @@ function control_lxc(servicename, rows, option, request)
     {
         // create.stop(servicename);
         console.log("stop worker");
-        stop_lxc(servicename,rows[0].ip_address,"10.151.36.24")
-        stop_lxc(servicename,rows[1].ip_address,"10.151.43.51")
+        stop_lxc(servicename,rows[0].ip_address,"10.151.36.38")
+        stop_lxc(servicename,rows[1].ip_address,"10.151.36.206")
         req_stop(servicename);
         req_stop(servicename+'_root');
     }
