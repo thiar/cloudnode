@@ -84,10 +84,10 @@ function handle_database(req, res) {
             }
             else
             {
-              connection.query("INSERT INTO service (id_service, nama_service, status) VALUES ('"+connection.threadId+"','"+data+"', 'START')",function(err,rows, fields){
+              connection.query("INSERT INTO service (nama_service, status) VALUES ('"+data+"', 'START')",function(err,rows, fields){
                 if(worker == 1)
                 {
-                    connection.query("UPDATE address SET id_service="+connection.threadId+" WHERE id_service=0 limit 1",function(err,rows, fields){
+                    connection.query("UPDATE address a, (SELECT id_service FROM service WHERE nama_service='"+data+"') b, (SELECT id_ip FROM address WHERE id_service = 0 limit 1) c SET a.id_service=b.id_service WHERE a.id_ip=c.id_ip", function(err,rows, fields){
 
                         connection.query("SELECT * from address where id_service='"+connection.threadId+"'", function(err, rows, fields){
                             //res.json(rows);
