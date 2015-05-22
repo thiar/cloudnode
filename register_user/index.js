@@ -160,7 +160,16 @@ app.post('/stop:service',function(req,res){
   	});
 	
 })
-
+app.post('/create:service',function(req,res){
+	console.log(req.body)
+	connection.query('SELECT namaservice,memory,space,bandwith,request,worker,status,ip,port from service where customer_idcustomer='+req.session.customer.idCustomer+';', function(err, rows, fields) {
+  		sendreq(req,rows,res);
+  		//console.log(req.body.data.option)
+  		//console.log(rows[0].worker.split(" ")[0])
+  		//console.log(rows[0].request.split(" ")[0])
+	
+  	});
+});
 
 app.get('/logout',function(req,res){
 	req.session.destroy()
@@ -192,7 +201,7 @@ function sendreq(req,rows,res)
     })
     .then(function(response) {
         // get the response body 
-        console.log(response.getBody());
+        //console.log(response.getBody());
         res.send(response.getBody());
     });
 }

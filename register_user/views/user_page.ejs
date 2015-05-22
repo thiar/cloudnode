@@ -216,11 +216,15 @@
                   <thead>
                     <tr>
                         <th class="center" style="width:5%">No</th>
-                        <th class="center" style="width:15%">Apps Name</th>
-                        <th class="center" style="width:15%">Storage</th>
-                        <th class="center" style="width:15%">Request</th>
-                        <th class="center" style="width:15%">Bandwidth</th>
+                        <th class="center" style="width:10%">Apps Name</th>
+                        <th class="center" style="width:10%">Storage</th>
+                        <th class="center" style="width:10%">Request</th>
+                        <th class="center" style="width:10%">Bandwidth</th>
                         <th class="center" style="width:10%">Status</th>
+                        <th class="center" style="width:10%">IP Aplikasi</th>
+                        <th class="center" style="width:10%">Port Aplikasi</th>
+                        <th class="center" style="width:10%">IP webconsole</th>
+                        <th class="center" style="width:10%">Port webconsole</th>
                         <th class="center" style="width:10%">Action</th>
                     </tr>
                   </thead>
@@ -233,6 +237,10 @@
                       <td class="center"><%= userService[i].request%></td>
                       <td class="center"><%= userService[i].bandwith%></td>
                       <td class="center"><%= userService[i].status%></td>
+                      <td id="<%= userService[i].namaservice+'A'%>" class="center">NaNn</td>
+                      <td id="<%= userService[i].namaservice+'PA'%>" class="center">NaNn</td>
+                      <td id="<%= userService[i].namaservice+'W'%>" class="center">NaNn</td>
+                      <td id="<%= userService[i].namaservice+'P'%>" class="center console_port">NaNn</td>
                         <td class="center">
                         <div class="btn-group btn-group-xs">
                         <a id="<%= userService[i].namaservice%>" class="btn btn-complete start-service"><i class="fa fa-play"></i></a>
@@ -260,9 +268,13 @@
   <script type="text/javascript">
     $(function() {
 
-      $(".start-service").click(function(){
-      var id=this.id
-
+      $("#tableWithSearch").on("click",".start-service",function(e){
+      var id=$(this).attr("id")
+      var nid="#"+id+'P'
+      var wid="#"+id+'W'
+      var pid="#"+id+'PA'
+      var aid="#"+id+'A'
+      var webconsole_port= $(this).parent().parent().prev()
        bootbox.dialog({
         message: "Are you sure start "+id+" ?",
         title: "Start Apps",
@@ -283,9 +295,13 @@
                 option:"START",
                 servicename:id
               }
-              console.log(data)
+              
               $.post("/start:service", {data:data}, function(result){
-
+                  console.log(result)
+                  $(nid).text(result.port_webconsole)
+                  $(wid).text(result.ip_webconsole)
+                  $(pid).text(result.port_balancer)
+                  $(aid).text(result.ip_balancer)
               })
             }
           }
@@ -407,7 +423,14 @@
                   label: "OK",
                   className: "btn-success",
                   callback: function() {
-                    window.location='/userpage';
+                    var data={
+                      option:"CREATE",
+                      servicename:serviceName
+                    }
+                    $.post("/create:service", {data:data}, function(result){
+                        console.log(result)
+                    })
+                    //window.location='/userpage';
                   }
                 }
               }
@@ -430,6 +453,7 @@
               }
             });
         }
+
         console.log(result)
       });
       return false; // avoid to execute the actual submit of the form.
