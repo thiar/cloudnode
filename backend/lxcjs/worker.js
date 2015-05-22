@@ -38,4 +38,12 @@ app.post("/stop", function(req, res){
     res.json(result);
 })
 
+app.post("/remove", function(req, res){
+    var servicename = req.body.servicename;
+    create.destroy(servicename);
+    console.log("masuk remove");       
+    var result = {result : 'REMOVE OK'}
+    res.json(result);
+})
+
 app.listen(3000);

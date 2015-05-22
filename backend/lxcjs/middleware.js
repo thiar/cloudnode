@@ -18,7 +18,7 @@ var pool = mysql.createPool({
     connectionLimit : 100, //important
     host     : 'localhost',
     user     : 'root',
-    password : '',
+    password : 'sogoladi',
     database : 'address_service',
     debug    :  false
 });
@@ -34,27 +34,24 @@ function handle_database(req, res) {
     
     pool.getConnection(function(err,connection){
         if (err) {
-          connection.release();
-          //res.json({"code" : 100, "status" : "Error in connection database"});
-          return;
+            connection.release();
+            //res.json({"code" : 100, "status" : "Error in connection database"});
+            return;
         }   
 
         console.log('connected as id ' + connection.threadId);
         
         connection.query("SELECT * from service where nama_service='"+data+"'",function(err,rows, fields){
             connection.release();
-            // console.log("0");
-            // console.log(rows);
+            //DATA ADA DI DATABASE//
             if(rows != undefined && rows.length > 0) {
                 var id_address = rows[0].id_service;
                 var status = rows[0].status;
                 if((status != "START" && option == "START") || (status != "STOP" && option == "STOP"))
                 {
-                    connection.query("SELECT * from address where id_service='"+id_address+"'", function(err, rows, fields){
-                    //res.json(rows);
-                        
-                        // console.log("1");
-                        // console.log(rows);
+                    connection.query("SELECT * from address where id_service='"+id_address+"'", function(err, rows, fields){                        
+                        console.log("data dari database(start or stop): ");
+                        console.log(rows);
                         control_lxc(data, rows, option, request);
                         var result = {
                             status : option,
@@ -72,6 +69,26 @@ function handle_database(req, res) {
                     })
                     
                 }
+                else if(option == "DELETE")
+                {
+                    console.log("data dari database(delete): ");
+                    console.log(rows);
+                    control_lxc(data, rows, option, request);
+                    var result = {
+                        status : option,
+                        ip_webconsole : rows[0].ip_webconsole,
+                        port_webconsole : rows[0].port_webconsole,
+                        ip_balancer : rows[0].ip_balancer,
+                        port_balancer : rows[0].port_balancer
+                    }
+                    res.json(result);
+
+                    connection.query("DELETE FROM service WHERE id_service="+id_address+";UPDATE address SET id_service=0 WHERE id_service="+id_address+"", function(err, rows, fields){
+                    //res.json(rows);
+                        console.log("hapus record di database");                           
+                    })
+                    
+                }
                 else
                 {
                     check = 0;
@@ -82,17 +99,26 @@ function handle_database(req, res) {
                 }
                           
             }
-            else
+
+            //DATA TIDAK ADA DAN OPTION DELETE//
+
+            else if(rows.length < 0 && option == "DELETE")
+            {
+                console.log("NO SERVICE WERE DELETED");
+            }
+
+            //DATA TIDAK ADA DAN INGIN START
+            else if(rows.length < 0 && option == "START")
             {
               connection.query("INSERT INTO service (nama_service, status) VALUES ('"+data+"', 'START')",function(err,rows, fields){
                 if(worker == 1)
                 {
                     connection.query("UPDATE address a, (SELECT id_service FROM service WHERE nama_service='"+data+"') b, (SELECT id_ip FROM address WHERE id_service = 0 limit 1) c SET a.id_service=b.id_service WHERE a.id_ip=c.id_ip", function(err,rows, fields){
 
-                        connection.query("SELECT * from address where id_service='"+connection.threadId+"'", function(err, rows, fields){
+                        connection.query("select * from address a, (SELECT * FROM service WHERE nama_service='"+data+"') b WHERE a.id_service= b.id_service", function(err, rows, fields){
                             //res.json(rows);
-                            // console.log("2");
-                            // console.log(rows);
+                            console.log("insert and update into database");
+                            console.log(rows);
                             control_lxc(data, rows, option, request);
                             var result = {
                                 status : option,
@@ -108,12 +134,12 @@ function handle_database(req, res) {
                 }
                 else
                 {
-                    connection.query("UPDATE address SET id_service="+connection.threadId+" WHERE id_service=0 limit 2",function(err,rows, fields){
+                    connection.query("UPDATE address a, (SELECT id_service FROM service WHERE nama_service='"+data+"') b, (SELECT id_ip FROM address WHERE id_service = 0 limit 2) c SET a.id_service=b.id_service WHERE a.id_ip=c.id_ip",function(err,rows, fields){
 
-                        connection.query("SELECT * from address where id_service="+connection.threadId, function(err, rows, fields){
+                        connection.query("select * from address a, (SELECT * FROM service WHERE nama_service='"+data+"') b WHERE a.id_service= b.id_service", function(err, rows, fields){
                             //res.json(rows);
-                            // console.log("3");
-                            // console.log(rows);
+                            console.log("insert and update into database");
+                            console.log(rows);
                             control_lxc(data, rows, option, request);
                             var result = {
                                 status : option,
@@ -127,6 +153,12 @@ function handle_database(req, res) {
                     }) 
                 }                                
               })
+            }
+
+            //DATA TIDAK ADA TAPI STOP
+            else
+            {
+                console.log("NO SERVICE AT STOP")
             }
             
                        
@@ -161,7 +193,7 @@ function req_start(servicename, request, rows)
             worker1: rows[0].ip_address+':'+rows[0].port_address            
         }
 
-    var req_balancer = requestify.request('http://10.151.36.79:1000/start', {
+    var req_balancer = requestify.request('http://10.151.36.79:5000/start', {
         method: 'POST',
         body: data,
         headers: {
@@ -179,7 +211,7 @@ function req_start(servicename, request, rows)
         console.log(response.getBody());
     });
 
-    var req_webconsole = requestify.request('http://10.151.36.79:1000/start', {
+    var req_webconsole = requestify.request('http://10.151.36.79:5000/start', {
         method: 'POST',
         body: {
             servicename: servicename+"_root",
@@ -206,7 +238,7 @@ function req_start(servicename, request, rows)
 
 function req_stop(servicename)
 {
-    var stop_service = requestify.request('http://10.151.36.79:1000/stop', {
+    var stop_service = requestify.request('http://10.151.36.79:5000/stop', {
         method: 'POST',
         body: {
             servicename: servicename,
@@ -228,7 +260,8 @@ function req_stop(servicename)
 
 function create_lxc(servicename,ip_address,worker_ip)
 {
-    var stop_service = requestify.request('http://'+worker_ip+':3000/create', {
+    console.log("kirim create ke worker");
+    var create_service = requestify.request('http://'+worker_ip+':3000/create', {
         method: 'POST',
         body: {
             servicename: servicename,
@@ -250,7 +283,8 @@ function create_lxc(servicename,ip_address,worker_ip)
 
 function start_lxc(servicename,ip_address,worker_ip)
 {
-    var stop_service = requestify.request('http://'+worker_ip+':3000/start', {
+    console.log("kirim start ke worker");
+    var start_service = requestify.request('http://'+worker_ip+':3000/start', {
         method: 'POST',
         body: {
             servicename: servicename,
@@ -273,7 +307,33 @@ function start_lxc(servicename,ip_address,worker_ip)
 
 function stop_lxc(servicename,ip_address,worker_ip)
 {
+    console.log("kirim stop ke worker");
     var stop_service = requestify.request('http://'+worker_ip+':3000/stop', {
+        method: 'POST',
+        body: {
+            servicename: servicename,
+            ip_address: ip_address
+        },
+        headers: {
+            'X-Forwarded-By': 'me'
+        },
+        cookies: {
+            mySession: 'some cookie value'
+        },
+
+        dataType: 'json'        
+    })
+    .then(function(response) {
+        // get the response body 
+        response.getBody();
+    });
+}
+
+
+function remove_lxc(servicename,ip_address,worker_ip)
+{
+    console.log("kirim delete ke worker");
+    var stop_service = requestify.request('http://'+worker_ip+':3000/remove', {
         method: 'POST',
         body: {
             servicename: servicename,
@@ -296,6 +356,7 @@ function stop_lxc(servicename,ip_address,worker_ip)
 
 function control_lxc(servicename, rows, option, request)
 {  
+    console.log("masuk control_lxc");
     if(option == 'CREATE'){
         if(rows.length > 1)
         {
@@ -305,7 +366,7 @@ function control_lxc(servicename, rows, option, request)
         }
         else
         {
-            create_lxc(servicename,rows[0].ip_address,"10.151.36.38")
+            create_lxc(servicename,rows[0].ip_address,"10.151.36.206")
             console.log("create 1 worker");
 
         }
@@ -328,22 +389,25 @@ function control_lxc(servicename, rows, option, request)
             start_lxc(servicename,rows[0].ip_address,"10.151.36.206")
             console.log("start 1 worker");
         }
-
+        console.log("kirim req start ke manajer");
         req_start(servicename, request, rows);
     }
 
     else if(option == 'STOP') 
     {
         // create.stop(servicename);
-        console.log("stop worker");
-        stop_lxc(servicename,rows[0].ip_address,"10.151.36.38")
-        stop_lxc(servicename,rows[1].ip_address,"10.151.36.206")
+        console.log("kirim req stop ke manajer");
+        //stop_lxc(servicename,rows[0].ip_address,"10.151.36.38")
+        stop_lxc(servicename,rows[0].ip_address,"10.151.36.206")
         req_stop(servicename);
         req_stop(servicename+'_root');
     }
 
-    else if(option == 'delete'){
-      create.destroy(servicename);  
+    else if(option == 'DELETE'){
+      //create.destroy(servicename);  
+        //remove_lxc(servicename,rows[0].ip_address,"10.151.36.38")
+        remove_lxc(servicename,rows[0].ip_address,"10.151.36.206")
+        console.log("delete worker");
     }
     
 }
@@ -353,7 +417,7 @@ app.post("/", function(req, res){
     var option = req.body.option;
     
     handle_database(req, res);
-    // console.log(check);
+    console.log("masuk middleware");
     // if(!check)
     // {
     //     var result = {result : 'OK'}
